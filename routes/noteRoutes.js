@@ -1,13 +1,17 @@
 const express = require("express");
 const router = express.Router();
 const Note = require("../models/Note.js");
+const authMiddleware = require("../middleware/authMiddleware.js");
+
+//Middleware
+router.use(authMiddleware);
 
 //Create a note
 router.post("/", async (req, res) => {
   try {
-    const newNote = await Note.find({
+    const newNote = await Note.create({
       ...req.body,
-      user: req.user._id,//Attach the logged in user's id to show their the owner
+      user: req.user._id, //Attach the logged in user's id to show their the owner
     });
     res.status(201).json(newNote);
   } catch (error) {
