@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 dotenv.config();
 mongoose.connect(process.env.MONGO_URI);
-const router = require("./routes/noteRoutes.js");
+const noteRouter = require("./routes/noteRoutes.js");
+const userRouter = require("./routes/userRoutes.js");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -27,7 +28,8 @@ mongooseConnection.on("disconnected", () => {
 });
 
 app.use(express.json());
-app.use("/api/notes", router);
+app.use("/api/users", userRouter);
+app.use("/api/notes", noteRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port: http://localhost:${PORT}`);

@@ -3,12 +3,26 @@ const router = express.Router();
 const User = require("../models/User.js");
 const jwt = require("jsonwebtoken");
 
+//signToken funcction
+function signToken(user) {
+  return jwt.sign(
+    {
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: "2h" },
+  );
+}
 //Create a new user - register
 router.post("/register", async (req, res) => {
   try {
     const user = await User.create(req.body);
+
+    //create JWT for this user
     const token = signToken(user);
-    res.status(201).json({ token, user });
+    res.status(201).json({ token, user }); //send user their JWT and info
   } catch (error) {
     res
       .status(400)
@@ -28,8 +42,9 @@ router.post("/login", async (req, res) => {
     return res.status(400).json({ message: "Wrong password!" });
   }
 
+  //create JWT for this user
   const token = signToken(user);
-  res.json({ token, user });
+  res.json({ token, user }); //send user their JWT and info
 });
 
 module.exports = router;
