@@ -16,8 +16,20 @@ router.post("/register", async (req, res) => {
   }
 });
 
-
 //User returning - login
-router.post("/login", async (req, res)=>{
-  
-})
+router.post("/login", async (req, res) => {
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return res.status(400).json({ message: "Can't find this user" });
+  }
+  const correctPassword = await user.isCorrectPassword(req.body.password);
+
+  if (!correctPassword) {
+    return res.status(400).json({ message: "Wrong password!" });
+  }
+
+  const token = signToken(user);
+  res.json({ token, user });
+});
+
+module.exports = router;
