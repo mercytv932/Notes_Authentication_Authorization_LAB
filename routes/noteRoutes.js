@@ -2,6 +2,18 @@ const express = require("express");
 const router = express.Router();
 const Note = require("../models/Note.js");
 
+//Create a note
+router.post("/", async (req, res) => {
+  try {
+    const newNote = await Note.find({
+      ...req.body,
+      user: req.user._id,//Attach the logged in user's id to show their the owner
+    });
+    res.status(201).json(newNote);
+  } catch (error) {
+    res.status(400).json({ message: "Title and Content required!" });
+  }
+});
 //Get all notes that belong to this logged-in-user
 router.get("/", async (req, res) => {
   try {
