@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User.js");
 const jwt = require("jsonwebtoken");
+const Note = require("../models/Note.js");
 
 //signToken funcction
 function signToken(user) {
@@ -24,9 +25,8 @@ router.post("/register", async (req, res) => {
     const token = signToken(user);
     res.status(201).json({ token, user }); //send user their JWT and info
   } catch (error) {
-    res
-      .status(400)
-      .json({ message: "Registration failed, please fill it correctly" });
+    console.error(error);
+    res.status(400).json({ message: "Registration failed" });
   }
 });
 
@@ -45,6 +45,12 @@ router.post("/login", async (req, res) => {
   //create JWT for this user
   const token = signToken(user);
   res.json({ token, user }); //send user their JWT and info
+});
+
+//Get note by id
+router.get("/:id", async (req, res) => {
+  const getNoteById = await Note.findById(req.params.id);
+  res.json(getNoteById);
 });
 
 module.exports = router;
